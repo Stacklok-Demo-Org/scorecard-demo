@@ -1,3 +1,5 @@
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Stacklok-Demo-Org/scorecard-demo/badge)](https://scorecard.dev/viewer/?uri=github.com/Stacklok-Demo-Org/scorecard-demo)
+
 # demo-repo-js 🦦
 
 ## Overview
