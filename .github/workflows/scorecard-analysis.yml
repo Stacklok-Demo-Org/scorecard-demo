@@ -1,0 +1,44 @@
+# Adapted from https://raw.githubusercontent.com/ossf/scorecard/main/.github/workflows/scorecard-analysis.yml
+name: Scorecard analysis workflow
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: '15 20 * * 4'
+jobs:
+  analyze:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    permissions:
+      # Needed for Code scanning upload
+      security-events: write
+      # Needed for GitHub OIDC token if publish_results is true
+      id-token: write
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+      
+      - name: "Run analysis"
+        uses: ossf/scorecard-action@v2.3.3
+        with:
+          results_file: 'results.sarif'
+          results_format: sarif
+          publish_results: 'true'
+
+      # Upload the results as artifacts (optional). Commenting out will disable
+      # uploads of run results in SARIF format to the repository Actions tab.
+      # https://docs.github.com/en/actions/advanced-guides/storing-workflow-data-as-artifacts
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: SARIF file
+          path: 'results.sarif'
+          retention-days: '7'
+      # Upload the results to GitHub's code scanning dashboard (optional).
+      # Commenting out will disable upload of results to your repo's Code Scanning dashboard
+      - name: "Upload to code-scanning"
+        uses: github/codeql-action/upload-sarif@v3.25.11
+        with:
+          sarif_file: 'results.sarif'
